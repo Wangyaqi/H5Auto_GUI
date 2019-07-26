@@ -1,0 +1,286 @@
+.edit_main {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    display: flex;
+}
+
+.page_list {
+    flex: 0 0 auto;
+    width: 240px;
+    height: 100%;
+    overflow-y: auto;
+    background-color: #EEEEEE;
+}
+
+.layer_list {
+    flex: 0 0 auto;
+    width: 250px;
+    height: 100%;
+    box-sizing: border-box;
+    padding: 20px;
+    overflow-y: auto;
+}
+
+.page_show {
+    position: relative;
+    flex: 1;
+    height: 100%;
+    overflow: hidden;
+    background-color: #EEEEEE;
+}
+
+.layer_edit {
+    display: flex;
+    flex: 0 0 auto;
+    flex-direction: column;
+    width: 360px;
+    height: 100%;
+    overflow: hidden;
+    box-sizing: border-box;
+}
+
+.page_item {
+    padding: 20px;
+}
+
+.page_item.act {
+    background-color: #FFFFFF;
+}
+
+.page_item_show {
+    position: relative;
+    width: 100%;
+    height: 280px;
+    background-size: cover;
+    background-position: center;
+    background-color: #00b2ee;
+}
+
+.page_item_no {
+    position: absolute;
+    width: 100%;
+    height: 40px;
+    left: 0;
+    bottom: 0;
+    font-size: 16px;
+    text-align: center;
+    line-height: 40px;
+    background-color: rgba(0, 0, 0, 0.5);
+    color: #FFFFFF;
+}
+
+.page_item_delete {
+    position: absolute;
+    width: 40px;
+    height: 40px;
+    top: 0;
+    right: 0;
+    text-align: center;
+    line-height: 40px;
+    font-size: 30px;
+    color: white;
+    text-shadow: #000000 3px 3px 6px;
+    cursor: pointer;
+}
+
+.layer_item {
+    display: flex;
+    width: 100%;
+    height: 40px;
+    border-bottom: solid 1px #DDDDDD;
+}
+
+.layer_item_dot {
+    display: inline-block;
+    width: 10px;
+    height: 10px;
+    background-color: #00b2ee;
+    border-radius: 10px;
+    margin: 15px 5px 15px 5px;
+    opacity: 0;
+}
+
+.layer_item.act .layer_item_dot {
+    opacity: 1;
+}
+
+.layer_item_type {
+    display: inline-block;
+    width: 40px;
+    height: 24px;
+    margin: 8px 10px 8px 0px;
+    text-align: center;
+    line-height: 24px;
+    font-size: 14px;
+    border-radius: 5px;
+    color: white;
+}
+
+.layer_item_type.text {
+    background-color: #8cc77c;
+}
+
+.layer_item_type.img {
+    background-color: #ff6666;
+}
+
+.layer_item_name {
+    font-size: 14px;
+    flex: 1;
+    line-height: 40px;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+.layer_item_delete {
+    display: inline-block;
+    width: 40px;
+    height: 40px;
+    text-align: center;
+    line-height: 40px;
+    font-size: 24px;
+    cursor: pointer;
+}
+
+.page_show_view {
+    position: absolute;
+    left: 50%;
+    top: 0;
+    transform-origin: top center;
+    -webkit-transform-origin: top center;
+    overflow: hidden;
+}
+
+.page_show_view .selected {
+    outline: solid 4px #00b2ee;
+}
+
+.page_show_scale {
+    position: absolute;
+    width: 200px;
+    height: 40px;
+    bottom: 0;
+    left: 50%;
+    margin-left: -100px;
+    line-height: 40px;
+    text-align: center;
+    background-color: white;
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
+}
+
+.page_show_scale input {
+    width: 100px;
+    vertical-align: middle;
+}
+
+.layer_edit_menu {
+    display: flex;
+    height: 80px;
+    line-height: 30px;
+    border-bottom: solid 1px #DDDDDD;
+    user-select: none;
+    -webkit-user-select: none;
+}
+
+.layer_edit_menu span {
+    flex: 1;
+    box-sizing: border-box;
+    text-align: center;
+    cursor: pointer;
+    box-sizing: border-box;
+    padding-top: 10px;
+}
+
+.layer_edit_menu span:hover {
+    color: white;
+    background-color: #00b2ee;
+}
+
+.layer_edit_menu span {
+    border-right: solid 1px #DDDDDD;
+}
+
+.layer_edit_menu span:last-child {
+    border-right: none;
+}
+
+.layer_edit_wrapper {
+    flex: 1;
+    overflow-y: auto;
+    padding: 20px;
+}
+
+.layer_edit_item {
+    display: flex;
+    padding-bottom: 10px;
+}
+
+.layer_edit_item .layer_edit_label {
+    flex: 1;
+    text-align: right;
+    box-sizing: border-box;
+    padding-right: 10px;
+    line-height: 30px;
+}
+
+.layer_edit_item .layer_edit_right {
+    flex: 3;
+}
+
+.layer_edit_item .layer_edit_input {
+    display: block;
+    box-sizing: border-box;
+    width: 100%;
+    height: 30px;
+    line-height: 38px;
+    border-radius: 5px;
+    border: solid 1px #DDDDDD;
+    text-indent: 10px;
+}
+
+.layer_edit_item .layer_edit_tips {
+    display: block;
+    line-height: 20px;
+    font-size: 12px;
+    color: #999999;
+    margin-top: 5px;
+}
+
+.layer_edit_item .layer_edit_tips a {
+    cursor: pointer;
+    color: #00b2ee;
+}
+
+.layer_edit_title {
+    margin-top: 20px;
+    margin-bottom: 10px;
+    border-top: solid 1px #DDDDDD;
+    line-height: 40px;
+    font-size: 16px;
+    font-weight: bold;
+    text-align: center;
+}
+
+.layer_edit_title_add,
+.layer_edit_title_remove {
+    display: inline-block;
+    width: 30px;
+    height: 30px;
+    text-align: center;
+    line-height: 30px;
+    color: white;
+    margin-left: 10px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.layer_edit_title_add {
+    background-color: #8cc77c;
+}
+
+.layer_edit_title_remove {
+    background-color: #ff6666;
+}

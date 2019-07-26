@@ -1,0 +1,30 @@
+{
+  "name": "h5auto",
+  "version": "1.0.0",
+  "description": "Psd to html",
+  "repository": {},
+  "main": "main.js",
+  "scripts": {
+    "start": "electron main.js"
+  },
+  "keywords": [
+    "h5",
+    "auto"
+  ],
+  "author": "Wangyaqi",
+  "license": "CC0-1.0",
+  "devDependencies": {
+    "electron": "^5.0.7"
+  },
+  "dependencies": {
+    "autoprefixer": "^9.6.1",
+    "html2canvas": "^1.0.0-rc.3",
+    "jquery": "^3.4.1",
+    "mousetrap": "^1.6.3",
+    "postcss": "^7.0.17",
+    "postcss-js": "^2.0.2",
+    "psd": "^3.2.0",
+    "sweetalert2": "^8.14.0",
+    "vue": "^2.6.10"
+  }
+}

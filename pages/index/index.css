@@ -1,0 +1,42 @@
+.psd_file_zone {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    left: 0;
+    top: 0;
+}
+
+.psd_file_zone:before {
+    content: "";
+    position: absolute;
+    left: 30px;
+    top: 30px;
+    right: 30px;
+    bottom: 30px;
+    border: dashed 4px #999999;
+    border-radius: 10px;
+}
+
+.psd_file_zone span {
+    position: absolute;
+    width: 100%;
+    height: 40px;
+    left: 0;
+    top: 50%;
+    margin-top: -20px;
+    box-sizing: border-box;
+    padding: 0px 60px;
+    line-height: 40px;
+    text-align: center;
+    font-size: 30px;
+    color: #666666;
+}
+
+.index_tips {
+    position: absolute;
+    left: 60px;
+    bottom: 60px;
+    font-size: 14px;
+    color: #999999;
+    line-height: 22px;
+}

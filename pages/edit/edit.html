@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no"/>
+    <link rel="stylesheet" type="text/css" href="../../static/css/main.css">
+    <link rel="stylesheet" type="text/css" href="animate.css">
+    <link rel="stylesheet" type="text/css" href="edit.css">
+    <title>H5Auto</title>
+</head>
+<body>
+<div class="container">
+    <div class="edit_main" id="edit_app" v-if="h5auto_obj">
+        <div class="page_list">
+            <div v-for="(page_item,page_index) in h5auto_obj.page_list" class="page_item"
+                 :class="{act:page_index===current_page_index}" @click="set_current_page_index(page_index)">
+                <div class="page_item_show"
+                     :style="{backgroundImage: 'url('+page_thumb[page_index]+')'}">
+                    <span class="page_item_no">第{{page_item.page_index}}页</span>
+                    <span class="page_item_delete" @click.stop="delete_page(page_index)">×</span>
+                </div>
+            </div>
+        </div>
+        <div class="layer_list">
+            <div v-for="(layer_item,layer_index) in flat_layers" class="layer_item"
+                 :class="{act:layer_index===current_layer_index}" @click="set_current_layer_index(layer_index)">
+                <b class="layer_item_dot"></b>
+                <b class="layer_item_type img" v-if="layer_item.type==='img'">Img</b>
+                <b class="layer_item_type text" v-else-if="layer_item.type==='text'">Txt</b>
+                <label class="layer_item_name">图层{{layer_item.id}}</label>
+                <span class="layer_item_delete" @click="delete_layer(layer_item,layer_index)">×</span>
+            </div>
+        </div>
+        <div class="page_show">
+            <div class="page_show_view"
+                 :style="{width:h5auto_obj.d_width+'px',marginLeft:-h5auto_obj.d_width/2+'px',height:h5auto_obj.d_height+'px',transform:'scale('+show_scale+')',backgroundImage:'url('+current_page_bg+')'}">
+                <pagegroup v-bind:layers="flat_layers" v-bind:current_layer_id="current_layer_id"></pagegroup>
+            </div>
+            <div class="page_show_scale">
+                <span>缩放</span>
+                <input v-model="show_scale" type="range" min="0.2" max="2" step="0.1"/>
+            </div>
+        </div>
+        <div class="layer_edit">
+            <div class="layer_edit_menu">
+                <span @click="save_h5auto_obj()">保存<br/>Ctrl+S</span>
+                <span @click="restore_h5auto_obj()">撤销<br/>Ctrl+Z</span>
+                <span @click="play()">播放<br/>Ctrl+F5</span>
+                <span @click="publish()">发布<br/>Ctrl+F9</span>
+                <span @click="go_back()">退出<br/>Ctrl+F12</span>
+            </div>
+            <div class="layer_edit_wrapper">
+                <div class="layer_edit_title">项目属性</div>
+                <div class="layer_edit_item">
+                    <label class="layer_edit_label">标题</label>
+                    <div class="layer_edit_right">
+                        <input class="layer_edit_input" type="text" v-model="h5auto_obj.title"
+                               @change="change_attr()"/>
+                    </div>
+                </div>
+                <div class="layer_edit_title">当前页面属性</div>
+                <div class="layer_edit_item">
+                    <label class="layer_edit_label">页面适配</label>
+                    <div class="layer_edit_right">
+                        <select class="layer_edit_input" v-model="current_page.mode" @change="change_attr()">
+                            <option value="">内容上下居中</option>
+                            <option value="top">内容顶部对齐</option>
+                            <option value="bottom">内容底部对齐</option>
+                            <option value="contain">内容缩放全部显示</option>
+                            <option value="cover">内容缩放铺满页面</option>
+                        </select>
+                        <label class="layer_edit_tips">选择设计图页面与浏览器页面比例不一致时页面适配方式，每页单独配置</label>
+                    </div>
+                </div>
+                <div class="layer_edit_title">当前图层属性</div>
+                <div class="layer_edit_item">
+                    <label class="layer_edit_label">左</label>
+                    <div class="layer_edit_right">
+                        <input class="layer_edit_input" type="number" v-model="current_layer.left"
+                               @change="change_attr()"/>
+                    </div>
+                </div>
+                <div class="layer_edit_item">
+                    <label class="layer_edit_label">上</label>
+                    <div class="layer_edit_right">
+                        <input class="layer_edit_input" type="number" v-model="current_layer.top"
+                               @change="change_attr()"/>
+                    </div>
+                </div>
+                <div class="layer_edit_item">
+                    <label class="layer_edit_label">宽</label>
+                    <div class="layer_edit_right">
+                        <input class="layer_edit_input" type="number" v-model="current_layer.width"
+                               @change="change_attr()"/>
+                    </div>
+                </div>
+                <div class="layer_edit_item">
+                    <label class="layer_edit_label">高</label>
+                    <div class="layer_edit_right">
+                        <input class="layer_edit_input" type="number" v-model="current_layer.height"
+                               @change="change_attr()"/>
+                    </div>
+                </div>
+                <div v-if="current_layer.type === 'text'">
+                    <div class="layer_edit_item">
+                        <label class="layer_edit_label">行高</label>
+                        <div class="layer_edit_right">
+                            <input class="layer_edit_input" type="number" v-model="current_layer.lineHeight"
+                                   @change="change_attr()"/>
+                        </div>
+                    </div>
+                    <div class="layer_edit_item">
+                        <label class="layer_edit_label">字体大小</label>
+                        <div class="layer_edit_right">
+                            <input class="layer_edit_input" type="number" v-model="current_layer.fontSize"
+                                   @change="change_attr()"/>
+                        </div>
+                    </div>
+                </div>
+                <div class="layer_edit_item">
+                    <label class="layer_edit_label">启用动画</label>
+                    <div class="layer_edit_right">
+                        <select class="layer_edit_input" v-model.number="current_layer.animate" @change="change_attr()">
+                            <option value="0">关闭</option>
+                            <option value="1">启用</option>
+                        </select>
+                    </div>
+                </div>
+                <div v-if="current_layer.animate===1">
+                    <div class="layer_edit_item">
+                        <label class="layer_edit_label">初始隐藏</label>
+                        <div class="layer_edit_right">
+                            <select class="layer_edit_input" v-model.number="current_layer.hide"
+                                    @change="change_attr()">
+                                <option value="0">关闭</option>
+                                <option value="1">启用</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div v-for="(animation_item,animation_index) in current_layer.animation" :key="animation_index">
+                        <div class="layer_edit_title">
+                            动画序列{{animation_index+1}}
+                            <span class="layer_edit_title_add" @click="add_animation()">+</span>
+                            <span class="layer_edit_title_remove" @click="remove_animation(animation_item)">-</span>
+                        </div>
+                        <div class="layer_edit_item">
+                            <label class="layer_edit_label">动画名称</label>
+                            <div class="layer_edit_right">
+                                <select class="layer_edit_input" v-model.number="animation_item.name"
+                                        @change="change_attr()">
+                                    <optgroup label="Attention Seekers">
+                                        <option value="bounce">bounce</option>
+                                        <option value="flash">flash</option>
+                                        <option value="pulse">pulse</option>
+                                        <option value="rubberBand">rubberBand</option>
+                                        <option value="shake">shake</option>
+                                        <option value="swing">swing</option>
+                                        <option value="tada">tada</option>
+                                        <option value="wobble">wobble</option>
+                                        <option value="jello">jello</option>
+                                        <option value="heartBeat">heartBeat</option>
+                                    </optgroup>
+
+                                    <optgroup label="Bouncing Entrances">
+                                        <option value="bounceIn">bounceIn</option>
+                                        <option value="bounceInDown">bounceInDown</option>
+                                        <option value="bounceInLeft">bounceInLeft</option>
+                                        <option value="bounceInRight">bounceInRight</option>
+                                        <option value="bounceInUp">bounceInUp</option>
+                                    </optgroup>
+
+                                    <optgroup label="Bouncing Exits">
+                                        <option value="bounceOut">bounceOut</option>
+                                        <option value="bounceOutDown">bounceOutDown</option>
+                                        <option value="bounceOutLeft">bounceOutLeft</option>
+                                        <option value="bounceOutRight">bounceOutRight</option>
+                                        <option value="bounceOutUp">bounceOutUp</option>
+                                    </optgroup>
+
+                                    <optgroup label="Fading Entrances">
+                                        <option value="fadeIn">fadeIn</option>
+                                        <option value="fadeInDown">fadeInDown</option>
+                                        <option value="fadeInDownBig">fadeInDownBig</option>
+                                        <option value="fadeInLeft">fadeInLeft</option>
+                                        <option value="fadeInLeftBig">fadeInLeftBig</option>
+                                        <option value="fadeInRight">fadeInRight</option>
+                                        <option value="fadeInRightBig">fadeInRightBig</option>
+                                        <option value="fadeInUp">fadeInUp</option>
+                                        <option value="fadeInUpBig">fadeInUpBig</option>
+                                    </optgroup>
+
+                                    <optgroup label="Fading Exits">
+                                        <option value="fadeOut">fadeOut</option>
+                                        <option value="fadeOutDown">fadeOutDown</option>
+                                        <option value="fadeOutDownBig">fadeOutDownBig</option>
+                                        <option value="fadeOutLeft">fadeOutLeft</option>
+                                        <option value="fadeOutLeftBig">fadeOutLeftBig</option>
+                                        <option value="fadeOutRight">fadeOutRight</option>
+                                        <option value="fadeOutRightBig">fadeOutRightBig</option>
+                                        <option value="fadeOutUp">fadeOutUp</option>
+                                        <option value="fadeOutUpBig">fadeOutUpBig</option>
+                                    </optgroup>
+
+                                    <optgroup label="Flippers">
+                                        <option value="flip">flip</option>
+                                        <option value="flipInX">flipInX</option>
+                                        <option value="flipInY">flipInY</option>
+                                        <option value="flipOutX">flipOutX</option>
+                                        <option value="flipOutY">flipOutY</option>
+                                    </optgroup>
+
+                                    <optgroup label="Lightspeed">
+                                        <option value="lightSpeedIn">lightSpeedIn</option>
+                                        <option value="lightSpeedOut">lightSpeedOut</option>
+                                    </optgroup>
+
+                                    <optgroup label="Rotating Entrances">
+                                        <option value="rotateIn">rotateIn</option>
+                                        <option value="rotateInDownLeft">rotateInDownLeft</option>
+                                        <option value="rotateInDownRight">rotateInDownRight</option>
+                                        <option value="rotateInUpLeft">rotateInUpLeft</option>
+                                        <option value="rotateInUpRight">rotateInUpRight</option>
+                                    </optgroup>
+
+                                    <optgroup label="Rotating Exits">
+                                        <option value="rotateOut">rotateOut</option>
+                                        <option value="rotateOutDownLeft">rotateOutDownLeft</option>
+                                        <option value="rotateOutDownRight">rotateOutDownRight</option>
+                                        <option value="rotateOutUpLeft">rotateOutUpLeft</option>
+                                        <option value="rotateOutUpRight">rotateOutUpRight</option>
+                                    </optgroup>
+
+                                    <optgroup label="Sliding Entrances">
+                                        <option value="slideInUp">slideInUp</option>
+                                        <option value="slideInDown">slideInDown</option>
+                                        <option value="slideInLeft">slideInLeft</option>
+                                        <option value="slideInRight">slideInRight</option>
+
+                                    </optgroup>
+                                    <optgroup label="Sliding Exits">
+                                        <option value="slideOutUp">slideOutUp</option>
+                                        <option value="slideOutDown">slideOutDown</option>
+                                        <option value="slideOutLeft">slideOutLeft</option>
+                                        <option value="slideOutRight">slideOutRight</option>
+
+                                    </optgroup>
+
+                                    <optgroup label="Zoom Entrances">
+                                        <option value="zoomIn">zoomIn</option>
+                                        <option value="zoomInDown">zoomInDown</option>
+                                        <option value="zoomInLeft">zoomInLeft</option>
+                                        <option value="zoomInRight">zoomInRight</option>
+                                        <option value="zoomInUp">zoomInUp</option>
+                                    </optgroup>
+
+                                    <optgroup label="Zoom Exits">
+                                        <option value="zoomOut">zoomOut</option>
+                                        <option value="zoomOutDown">zoomOutDown</option>
+                                        <option value="zoomOutLeft">zoomOutLeft</option>
+                                        <option value="zoomOutRight">zoomOutRight</option>
+                                        <option value="zoomOutUp">zoomOutUp</option>
+                                    </optgroup>
+
+                                    <optgroup label="Specials">
+                                        <option value="hinge">hinge</option>
+                                        <option value="jackInTheBox">jackInTheBox</option>
+                                        <option value="rollIn">rollIn</option>
+                                        <option value="rollOut">rollOut</option>
+                                    </optgroup>
+                                </select>
+                                <label class="layer_edit_tips">动画使用 <a @click.prevent="open_url_in_navi('https://daneden.github.io/animate.css/')"> animate.css</a> </label>
+                            </div>
+                        </div>
+                        <div class="layer_edit_item">
+                            <label class="layer_edit_label">时长-秒</label>
+                            <div class="layer_edit_right">
+                                <input class="layer_edit_input" type="number" v-model="animation_item.duration"
+                                       @change="change_attr()"/>
+                                <label class="layer_edit_tips">动画执行一次的时长</label>
+                            </div>
+                        </div>
+                        <div class="layer_edit_item">
+                            <label class="layer_edit_label">延迟-秒</label>
+                            <div class="layer_edit_right">
+                                <input class="layer_edit_input" type="number" v-model="animation_item.delay"
+                                       @change="change_attr()"/>
+                            </div>
+                        </div>
+                        <div class="layer_edit_item">
+                            <label class="layer_edit_label">重复次数</label>
+                            <div class="layer_edit_right">
+                                <select class="layer_edit_input" v-model.number="animation_item.repeat"
+                                        @change="change_attr()">
+                                    <option value="0">无限</option>
+                                    <option value="1">1</option>
+                                    <option value="2">2</option>
+                                    <option value="3">3</option>
+                                    <option value="4">4</option>
+                                    <option value="5">5</option>
+                                    <option value="6">6</option>
+                                    <option value="7">7</option>
+                                    <option value="8">8</option>
+                                    <option value="9">9</option>
+                                    <option value="10">10</option>
+                                </select>
+                                <label class="layer_edit_tips">该动画总时长为重复次数*动画时长，每次反向执行也算作一次重复</label>
+                            </div>
+                        </div>
+                        <div class="layer_edit_item">
+                            <label class="layer_edit_label">反向执行</label>
+                            <div class="layer_edit_right">
+                                <select class="layer_edit_input" v-model.number="animation_item.is_alternate"
+                                        @change="change_attr()">
+                                    <option value="0">关闭</option>
+                                    <option value="1">启用</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="layer_edit_item">
+                            <label class="layer_edit_label">状态保留</label>
+                            <div class="layer_edit_right">
+                                <select class="layer_edit_input" v-model.number="animation_item.is_forwards"
+                                        @change="change_attr()">
+                                    <option value="0">关闭</option>
+                                    <option value="1">启用</option>
+                                </select>
+                                <label class="layer_edit_tips">启用则动画完成后保留最后一帧状态</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script type="text/x-template" id="pagegroup">
+    <div class="">
+        <div v-for="(item,index) in layers" :key="index">
+            <img v-if="item.type==='img'" class="" :class="{selected:current_layer_id===item.id}"
+                 :src="get_src(item.id)" style="position: absolute;"
+                 @click="set_current_layer_index(index)"
+                 :style="build_style(item)"/>
+            <div v-else-if="item.type==='text'" class="" :class="{selected:current_layer_id===item.id}"
+                 contenteditable="true"
+                 v-html="item.content" @focusout="set_content(item)" style="position: absolute;"
+                 @click="set_current_layer_index(index)"
+                 :style="build_style(item)"></div>
+        </div>
+    </div>
+</script>
+<script src="edit.js"></script>
+</body>
+</html>
