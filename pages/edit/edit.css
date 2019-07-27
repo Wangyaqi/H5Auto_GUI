@@ -264,6 +264,10 @@
     text-align: center;
 }
 
+.layer_edit_wrapper>.layer_edit_title:first-child {
+    border-top: none;
+}
+
 .layer_edit_title_add,
 .layer_edit_title_remove {
     display: inline-block;

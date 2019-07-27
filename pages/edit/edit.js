@@ -15,6 +15,9 @@ const autoprefixer = require('autoprefixer');
 
 const prefixer = postcssJs.sync([autoprefixer]);
 
+const imagemin = require('imagemin');
+const imageminPngquant = require('imagemin-pngquant');
+
 function init() {
     let search_arr = location.search.substring(1, location.search.length).split('&');
     let search_obj = {};
@@ -466,14 +469,20 @@ let edit_app = new Vue({
         },
         save_h5auto_obj: function () {
             save();
+            swal.fire({
+                title: '保存成功',
+                text: '',
+                type: 'success',
+                confirmButtonText: '确定'
+            })
         },
         restore_h5auto_obj: function () {
             restore();
         },
         play: function () {
-            $(".page_show_view").hide();
+            $(".page_show_view").children().hide();
             setTimeout(function () {
-                $(".page_show_view").show();
+                $(".page_show_view").children().show();
             }, 1);
         },
         publish: function () {
@@ -682,6 +691,19 @@ function publish() {
             text: '项目已输出至所选输出目录',
             type: 'success',
             confirmButtonText: '确定'
+        }).then(() => {
+            swal.fire({
+                title: '需要为您压缩图片吗？',
+                text: '如果您已经压缩过一次请忽略',
+                type: 'info',
+                showCancelButton: true,
+                confirmButtonText: '确定',
+                cancelButtonText: '取消'
+            }).then((result) => {
+                if (result.value) {
+                    png_compress();
+                }
+            });
         });
     }).catch(() => {
         swal.fire({
@@ -692,4 +714,28 @@ function publish() {
         });
     });
 
+}
+
+function png_compress() {
+    swal.fire({
+        title: '图片压缩中',
+        text: '可能会耗费较长时间',
+        type: 'info',
+        confirmButtonText: '请稍后。。。'
+    });
+    (async function () {
+        //一个不认反斜线的插件 path.resolve(path.resolve(global_output_path, 'img'), '*.png') 无法识别
+        await imagemin([path.resolve(global_output_path, 'img').replace(/\\/g, "/") + '/*.png'], {
+            destination: path.resolve(global_output_path, 'img'),
+            plugins: [
+                imageminPngquant()
+            ]
+        });
+        swal.fire({
+            title: '图片压缩完成',
+            text: '',
+            type: 'info',
+            confirmButtonText: '确定'
+        });
+    })();
 }

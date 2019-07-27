@@ -19,6 +19,8 @@
   "dependencies": {
     "autoprefixer": "^9.6.1",
     "html2canvas": "^1.0.0-rc.3",
+    "imagemin": "^7.0.0",
+    "imagemin-pngquant": "^8.0.0",
     "jquery": "^3.4.1",
     "mousetrap": "^1.6.3",
     "postcss": "^7.0.17",
