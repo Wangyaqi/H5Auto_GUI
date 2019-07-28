@@ -264,6 +264,7 @@ let page_group = Vue.component("pagegroup", {
             edit_app.current_layer_index = index;
         },
         set_content: function (item) {
+            // 必须在focusout监听
             item.content = event.target.innerHTML;
         },
         build_style: function (item) {
