@@ -18,6 +18,7 @@ const prefixer = postcssJs.sync([autoprefixer]);
 const imagemin = require('imagemin');
 const imageminPngquant = require('imagemin-pngquant');
 
+// 分析所选文件
 function init() {
     let search_arr = location.search.substring(1, location.search.length).split('&');
     let search_obj = {};
@@ -39,6 +40,7 @@ function init() {
 
 init();
 
+// PSD文件处理
 function psd_handler(psdfile) {
     swal.fire({
         title: '处理中...',
@@ -63,6 +65,7 @@ function psd_handler(psdfile) {
     let page_index = 0;//page_1对应page_index为1
     let page_total = psd_tree_exp.children.length;
 
+    // 一级图层遍历，分配页面
     function root_layerset_handler(tree_exp, tree) {
         for (let i = tree_exp.children.length - 1; i >= 0; i--) {
             let tree_exp_child = tree_exp.children[i],
@@ -86,6 +89,7 @@ function psd_handler(psdfile) {
         }, 1000);
     }
 
+    // 遍历每页
     function build_page(tree_exp, tree, page_index) {
         for (let i = tree_exp.children.length - 1; i >= 0; i--) {
             let tree_exp_child = tree_exp.children[i],
@@ -103,6 +107,7 @@ function psd_handler(psdfile) {
         });
     }
 
+    // 递归导出PSD树状结构
     function build_group(tree_exp, tree, group_index) {
         let group_obj = {id: group_index, type: "group", children: []};
         for (let i = tree_exp.children.length - 1; i >= 0; i--) {
@@ -194,7 +199,7 @@ function copy_dir(src_dir, dest_dir) {
     })
 }
 
-
+// 处理用户选择的JSON文件
 function json_handler(jsonfile) {
     let output_path = path.parse(jsonfile).dir;
     fs.readFile(jsonfile, 'utf8', (err, data) => {
@@ -209,6 +214,7 @@ function json_handler(jsonfile) {
 let global_h5auto_obj = {},
     global_output_path = "";
 
+// 全局变量赋值
 function load_project(h5auto_obj, output_path) {
     global_h5auto_obj = JSON.parse(JSON.stringify(h5auto_obj));
     global_output_path = output_path;
@@ -216,8 +222,8 @@ function load_project(h5auto_obj, output_path) {
     save();
 }
 
+// 保存当前状态到存储队列
 let save_arr = [];
-
 function save() {
     let current_obj_str = JSON.stringify(global_h5auto_obj);
     if (current_obj_str === save_arr[save_arr.length - 1]) {
@@ -229,6 +235,7 @@ function save() {
     });
 }
 
+// 撤销一步
 function restore() {
     if (save_arr.length <= 1) {
         return false;
@@ -238,6 +245,7 @@ function restore() {
     show_project();
 }
 
+// 页面显示用组件
 let page_group = Vue.component("pagegroup", {
     template: "#pagegroup",
     data: function () {
@@ -266,10 +274,12 @@ let page_group = Vue.component("pagegroup", {
     }
 })
 
+// 组合颜色
 function get_color(color_arr) {
     return 'rgba(' + color_arr[0] + ',' + color_arr[1] + ',' + color_arr[2] + ',' + color_arr[3] + ')'
 }
 
+// 获取图层样式-不含与动画有关的样式
 function get_style_from_layer(item) {
     let result = {};
     if (item.type === "img") {
@@ -294,6 +304,7 @@ function get_style_from_layer(item) {
     return result;
 }
 
+// 获取图层与动画有关的样式
 function get_animation_from_layer(layer) {
     if (layer.animate === 0) {
         return {}
@@ -332,6 +343,7 @@ function get_animation_from_layer(layer) {
     return result;
 }
 
+// 主界面功能APP
 let edit_app = new Vue({
     el: "#edit_app",
     data: {
@@ -563,6 +575,7 @@ Mousetrap.bind('up up down down left right left right b a enter', () => {
     }, 10)
 });
 
+// 摊平图层树状结构
 function flat_ele_tree(tree) {
     let result = [];
     if (tree.type === "group") {
@@ -580,7 +593,9 @@ function show_project() {
     edit_app.init();
 }
 
+// 发布
 function publish() {
+    // 将模版拷贝到用户目录
     fs.copyFileSync(path.resolve(__dirname, "../../template/index.html"), path.resolve(global_output_path, 'index.html'));
     fs.copyFileSync(path.resolve(__dirname, "../../template/css/style.css"), path.resolve(global_output_path, 'css/style.css'));
     fs.copyFileSync(path.resolve(__dirname, "../../template/js/script.js"), path.resolve(global_output_path, 'js/script.js'));
@@ -670,6 +685,8 @@ function publish() {
             data = data.replace(/{{d_width}}/g, d_width.toString());
             data = data.replace(/{{d_width_half}}/g, d_width_half.toString());
             data = data.replace(/{{uni_bg}}/g, uni_bg.toString());
+
+            // 使用postcss将css_obj转成输出到css文件的字符串
             postcss().process(prefixer(css_obj), {from: undefined, parser: postcssJs}).then((result) => {
                 data = data.replace(/{{css_main}}/g, result);
                 fs.writeFile(style_css_path, data, function () {
@@ -716,6 +733,7 @@ function publish() {
 
 }
 
+// PNG图片压缩
 function png_compress() {
     swal.fire({
         title: '图片压缩中',
