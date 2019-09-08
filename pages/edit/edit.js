@@ -270,7 +270,6 @@ let page_group = Vue.component("pagegroup", {
         build_style: function (item) {
             let result = get_style_from_layer(item);
             Object.assign(result, get_animation_from_layer(item));
-            console.log(result)
             return result;
         }
     }
