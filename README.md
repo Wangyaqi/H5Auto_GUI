@@ -4,12 +4,22 @@
  
 ## 用法
 
+### 安装以来
+
 ```
 npm install
 ```
 
+### 运行
+
 ```
 npm run start
+```
+
+### 发布
+
+```
+npm run dist
 ```
 
 ## 注意事项
