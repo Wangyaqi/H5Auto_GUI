@@ -270,6 +270,7 @@ let page_group = Vue.component("pagegroup", {
         build_style: function (item) {
             let result = get_style_from_layer(item);
             Object.assign(result, get_animation_from_layer(item));
+            console.log(result)
             return result;
         }
     }
@@ -334,7 +335,7 @@ function get_animation_from_layer(layer) {
         animation_group.animationName.push(animation_item.name);
         animation_group.animationDuration.push(animation_item.duration + 's');
         animation_group.animationDelay.push(animation_item.delay + 's');
-        animation_group.animationIterationCount.push(animation_item.animationIterationCount === 0 ? 'infinite' : animation_item.animationIterationCount);
+        animation_group.animationIterationCount.push(animation_item.repeat === 0 ? 'infinite' : animation_item.repeat);
         animation_group.animationDirection.push(animation_item.is_alternate === 0 ? '' : 'alternate');
         animation_group.animationFillMode.push(animation_item.is_forwards === 0 ? '' : 'forwards');
     }
@@ -518,6 +519,7 @@ let edit_app = new Vue({
         open_url_in_navi: function (url) {
             shell.openExternal(url);
         },
+        // 获取页面缩略图，放弃了，就这么滴吧
         get_page_thumb: function () {
             if (this.page_thumb.length === 0) {
                 for (let i = 0; i < this.h5auto_obj.page_list.length; i++) {

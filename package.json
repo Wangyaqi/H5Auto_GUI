@@ -5,7 +5,8 @@
   "repository": {},
   "main": "main.js",
   "scripts": {
-    "start": "electron main.js"
+    "start": "electron main.js",
+    "dist": "electron-builder"
   },
   "keywords": [
     "h5",
@@ -14,7 +15,8 @@
   "author": "Wangyaqi",
   "license": "CC0-1.0",
   "devDependencies": {
-    "electron": "^5.0.7"
+    "electron": "^5.0.7",
+    "electron-builder": "^21.2.0"
   },
   "dependencies": {
     "autoprefixer": "^9.6.1",
@@ -29,5 +31,11 @@
     "psd": "^3.2.0",
     "sweetalert2": "^8.14.0",
     "vue": "^2.6.10"
+  },
+  "build": {
+    "appId": "cn.redconsole.h5auto-gui",
+    "mac": {
+      "category": "cn.redconsole.h5auto-gui"
+    }
   }
 }

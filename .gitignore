@@ -87,5 +87,8 @@ typings/
 # DynamoDB Local files
 .dynamodb/
 
+# dist folder
+dist/
+
 # webstorm project folder
 .idea/
