@@ -15,21 +15,21 @@
   "author": "Wangyaqi",
   "license": "CC0-1.0",
   "devDependencies": {
-    "electron": "^5.0.7",
+    "electron": "^5.0.12",
     "electron-builder": "^21.2.0"
   },
   "dependencies": {
-    "autoprefixer": "^9.6.1",
-    "html2canvas": "^1.0.0-rc.3",
-    "imagemin": "^7.0.0",
+    "autoprefixer": "^9.7.1",
+    "html2canvas": "^1.0.0-rc.5",
+    "imagemin": "^7.0.1",
     "imagemin-pngquant": "^8.0.0",
     "jquery": "^3.4.1",
     "lodash": "^4.17.15",
     "mousetrap": "^1.6.3",
-    "postcss": "^7.0.17",
+    "postcss": "^7.0.21",
     "postcss-js": "^2.0.2",
     "psd": "^3.2.0",
-    "sweetalert2": "^8.14.0",
+    "sweetalert2": "^8.19.0",
     "vue": "^2.6.10"
   },
   "build": {
