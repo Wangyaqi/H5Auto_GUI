@@ -23,7 +23,7 @@
     "html2canvas": "^1.0.0-rc.5",
     "imagemin": "^7.0.1",
     "imagemin-pngquant": "^8.0.0",
-    "jquery": "^3.4.1",
+    "jquery": "^3.5.0",
     "lodash": "^4.17.15",
     "mousetrap": "^1.6.3",
     "postcss": "^7.0.21",
